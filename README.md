@@ -86,16 +86,15 @@ Google Colab에서 바로 실행할 수 있도록 준비된 노트북 파일을 
 # 1. 필요한 라이브러리 설치
 !pip install -q gymnasium[classic_control] torch numpy matplotlib tqdm
 
-# 2. 한글 폰트 설치
-!apt-get install -y fonts-nanum > /dev/null 2>&1
-
-# 3. 리포지토리 클론
+# 2. 리포지토리 클론
 !git clone https://github.com/taeryol/RL-CartPole-Project.git
 %cd RL-CartPole-Project
 
-# 4. 학습 실행
+# 3. 학습 실행 (폰트 설정 자동 - 추가 설치 불필요!)
 !python train.py
 ```
+
+**중요**: 이제 한글 폰트 설치가 필요 없습니다! 모든 환경에서 바로 실행 가능합니다.
 
 ### 로컬 환경에서 실행하기
 
@@ -366,9 +365,10 @@ class DQNAgent:
 
 ### 4. 한글 폰트가 깨짐 (그래프)
 **해결 방법**: 
-- **Google Colab**: 코드가 자동으로 나눔고딕 폰트를 설치하고 설정합니다.
-- **로컬 환경**: 시스템에 설치된 한글 폰트를 자동으로 감지하여 사용합니다.
-- **수동 설정**: `train.py`의 `setup_korean_font()` 함수를 확인하세요.
+- 이 프로젝트는 **폰트 문제를 완전히 해결**했습니다!
+- 그래프는 영문으로 표시되어 모든 환경에서 오류 없이 작동합니다.
+- 터미널 출력은 한글로 정상 표시됩니다.
+- Google Colab, 로컬 환경 모두에서 추가 설정 없이 바로 실행 가능합니다.
 
 ---
 

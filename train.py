@@ -13,65 +13,24 @@ import platform
 import os
 
 
-def setup_korean_font():
+def setup_matplotlib():
     """
-    한글 폰트 설정 (Google Colab 및 다양한 환경 지원)
+    Matplotlib 설정 (폰트 문제 완전 해결)
+    한글 폰트 없이도 작동하도록 영문 전용으로 설정
     """
-    import matplotlib.font_manager as fm
-    
-    # 시스템 종류 확인
-    system = platform.system()
-    
-    # Google Colab 환경인 경우 폰트 설치
-    try:
-        if 'COLAB_GPU' in os.environ or 'google.colab' in str(get_ipython()):
-            print("Google Colab 환경 감지 - 한글 폰트 설치 중...")
-            import subprocess
-            subprocess.run(['apt-get', 'install', '-y', 'fonts-nanum'], 
-                         stdout=subprocess.DEVNULL, 
-                         stderr=subprocess.DEVNULL)
-            
-            # 폰트 캐시 삭제 및 재생성
-            import shutil
-            font_cache_dir = os.path.expanduser('~/.cache/matplotlib')
-            if os.path.exists(font_cache_dir):
-                shutil.rmtree(font_cache_dir)
-            
-            # 나눔고딕 폰트 사용
-            plt.rcParams['font.family'] = 'NanumGothic'
-            print("한글 폰트 설정 완료!")
-            return
-    except:
-        pass
-    
-    # 사용 가능한 한글 폰트 찾기
-    available_fonts = [f.name for f in fm.fontManager.ttflist]
-    
-    # 우선순위대로 한글 폰트 찾기
-    korean_fonts = [
-        'NanumGothic',           # Google Colab, Ubuntu
-        'Malgun Gothic',         # Windows
-        'AppleGothic',           # macOS
-        'Noto Sans CJK KR',      # Linux
-        'DejaVu Sans'            # 기본 폰트 (한글 미지원)
-    ]
-    
-    selected_font = None
-    for font in korean_fonts:
-        if font in available_fonts:
-            selected_font = font
-            break
-    
-    if selected_font:
-        plt.rcParams['font.family'] = selected_font
-        print(f"한글 폰트 설정: {selected_font}")
-    else:
-        # 한글 폰트를 찾지 못한 경우 영문으로 대체
-        plt.rcParams['font.family'] = 'DejaVu Sans'
-        print("한글 폰트를 찾을 수 없어 영문으로 표시됩니다.")
+    # 기본 폰트를 sans-serif로 설정 (모든 환경에서 사용 가능)
+    plt.rcParams['font.family'] = 'sans-serif'
+    plt.rcParams['font.sans-serif'] = ['DejaVu Sans', 'Arial', 'Helvetica']
     
     # 마이너스 기호 깨짐 방지
     plt.rcParams['axes.unicode_minus'] = False
+    
+    # 그래프 스타일 설정
+    plt.rcParams['figure.dpi'] = 100
+    plt.rcParams['savefig.dpi'] = 300
+    plt.rcParams['figure.autolayout'] = False
+    
+    print("Matplotlib 설정 완료 (영문 폰트 사용)")
 
 
 def set_seed(seed=42):
@@ -149,8 +108,8 @@ def train_dqn(
         model_save_path (str): 모델 저장 경로 (기본값: 'cartpole_dqn.pth')
     """
     
-    # 한글 폰트 설정 (Google Colab 지원)
-    setup_korean_font()
+    # Matplotlib 설정 (모든 환경 지원)
+    setup_matplotlib()
     
     # Random Seed 고정 (재현성 확보)
     set_seed(42)
