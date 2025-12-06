@@ -124,6 +124,6 @@ if __name__ == "__main__":
     test_agent(
         model_path='cartpole_dqn.pth',  # 불러올 모델 파일
         n_episodes=5,                    # 테스트 에피소드 수
-        render=True,                     # 화면 렌더링 여부
+        render=False,                    # 화면 렌더링 여부
         sleep_time=0.02                  # 렌더링 시 프레임 간 대기 시간
     )

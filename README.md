@@ -73,7 +73,33 @@ pip install -r requirements.txt
 
 ## 🚀 실행 방법
 
-### 1. 모델 학습 (`train.py`)
+### Google Colab에서 실행하기 (권장)
+
+Google Colab에서 바로 실행할 수 있도록 준비된 노트북 파일을 사용하세요:
+
+1. `CartPole_DQN_Colab.ipynb` 파일을 Google Colab에 업로드
+2. 셀을 순서대로 실행
+3. 한글 폰트가 자동으로 설정됩니다!
+
+또는 Colab에서 직접 실행:
+```python
+# 1. 필요한 라이브러리 설치
+!pip install -q gymnasium[classic_control] torch numpy matplotlib tqdm
+
+# 2. 한글 폰트 설치
+!apt-get install -y fonts-nanum > /dev/null 2>&1
+
+# 3. 리포지토리 클론
+!git clone https://github.com/taeryol/RL-CartPole-Project.git
+%cd RL-CartPole-Project
+
+# 4. 학습 실행
+!python train.py
+```
+
+### 로컬 환경에서 실행하기
+
+#### 1. 모델 학습 (`train.py`)
 
 DQN 에이전트를 학습시키려면 다음 명령어를 실행합니다:
 
@@ -106,7 +132,7 @@ CartPole-v1 DQN 학습 시작
 🎉 목표 달성! 에피소드 437에서 평균 점수 195.34 달성!
 ```
 
-### 2. 모델 테스트 (`test.py`)
+#### 2. 모델 테스트 (`test.py`)
 
 학습된 모델을 불러와 시각적으로 확인하려면 다음 명령어를 실행합니다:
 
@@ -339,7 +365,10 @@ class DQNAgent:
 - Replay Buffer 크기를 늘려보세요.
 
 ### 4. 한글 폰트가 깨짐 (그래프)
-**해결 방법**: `train.py`의 `plot_rewards()` 함수에서 `fontproperties='Malgun Gothic'` 부분을 시스템에 설치된 한글 폰트로 변경하세요.
+**해결 방법**: 
+- **Google Colab**: 코드가 자동으로 나눔고딕 폰트를 설치하고 설정합니다.
+- **로컬 환경**: 시스템에 설치된 한글 폰트를 자동으로 감지하여 사용합니다.
+- **수동 설정**: `train.py`의 `setup_korean_font()` 함수를 확인하세요.
 
 ---
 

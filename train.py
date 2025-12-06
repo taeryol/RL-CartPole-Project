@@ -9,6 +9,69 @@ import torch
 import random
 from dqn_agent import DQNAgent
 from tqdm import tqdm
+import platform
+import os
+
+
+def setup_korean_font():
+    """
+    한글 폰트 설정 (Google Colab 및 다양한 환경 지원)
+    """
+    import matplotlib.font_manager as fm
+    
+    # 시스템 종류 확인
+    system = platform.system()
+    
+    # Google Colab 환경인 경우 폰트 설치
+    try:
+        if 'COLAB_GPU' in os.environ or 'google.colab' in str(get_ipython()):
+            print("Google Colab 환경 감지 - 한글 폰트 설치 중...")
+            import subprocess
+            subprocess.run(['apt-get', 'install', '-y', 'fonts-nanum'], 
+                         stdout=subprocess.DEVNULL, 
+                         stderr=subprocess.DEVNULL)
+            
+            # 폰트 캐시 삭제 및 재생성
+            import shutil
+            font_cache_dir = os.path.expanduser('~/.cache/matplotlib')
+            if os.path.exists(font_cache_dir):
+                shutil.rmtree(font_cache_dir)
+            
+            # 나눔고딕 폰트 사용
+            plt.rcParams['font.family'] = 'NanumGothic'
+            print("한글 폰트 설정 완료!")
+            return
+    except:
+        pass
+    
+    # 사용 가능한 한글 폰트 찾기
+    available_fonts = [f.name for f in fm.fontManager.ttflist]
+    
+    # 우선순위대로 한글 폰트 찾기
+    korean_fonts = [
+        'NanumGothic',           # Google Colab, Ubuntu
+        'Malgun Gothic',         # Windows
+        'AppleGothic',           # macOS
+        'Noto Sans CJK KR',      # Linux
+        'DejaVu Sans'            # 기본 폰트 (한글 미지원)
+    ]
+    
+    selected_font = None
+    for font in korean_fonts:
+        if font in available_fonts:
+            selected_font = font
+            break
+    
+    if selected_font:
+        plt.rcParams['font.family'] = selected_font
+        print(f"한글 폰트 설정: {selected_font}")
+    else:
+        # 한글 폰트를 찾지 못한 경우 영문으로 대체
+        plt.rcParams['font.family'] = 'DejaVu Sans'
+        print("한글 폰트를 찾을 수 없어 영문으로 표시됩니다.")
+    
+    # 마이너스 기호 깨짐 방지
+    plt.rcParams['axes.unicode_minus'] = False
 
 
 def set_seed(seed=42):
@@ -40,27 +103,27 @@ def plot_rewards(rewards, save_path='result_graph.png'):
     
     # 에피소드별 보상 그래프
     plt.subplot(1, 2, 1)
-    plt.plot(rewards, alpha=0.6, label='에피소드 보상')
-    plt.xlabel('에피소드', fontproperties='Malgun Gothic', fontsize=12)
-    plt.ylabel('총 보상', fontproperties='Malgun Gothic', fontsize=12)
-    plt.title('DQN 학습 진행 - 에피소드별 보상', fontproperties='Malgun Gothic', fontsize=14)
+    plt.plot(rewards, alpha=0.6, label='Episode Reward')
+    plt.xlabel('Episode', fontsize=12)
+    plt.ylabel('Total Reward', fontsize=12)
+    plt.title('DQN Training Progress - Episode Rewards', fontsize=14)
     plt.grid(True, alpha=0.3)
-    plt.legend(prop={'family': 'Malgun Gothic'})
+    plt.legend()
     
     # 이동 평균 (100 에피소드 단위)
     plt.subplot(1, 2, 2)
     if len(rewards) >= 100:
         moving_avg = [np.mean(rewards[max(0, i-99):i+1]) for i in range(len(rewards))]
-        plt.plot(moving_avg, color='red', linewidth=2, label='이동 평균 (100 에피소드)')
-        plt.axhline(y=195, color='green', linestyle='--', label='목표 점수 (195)')
+        plt.plot(moving_avg, color='red', linewidth=2, label='Moving Average (100 episodes)')
+        plt.axhline(y=195, color='green', linestyle='--', label='Target Score (195)')
     else:
-        plt.plot(rewards, color='red', linewidth=2, label='총 보상')
+        plt.plot(rewards, color='red', linewidth=2, label='Total Reward')
     
-    plt.xlabel('에피소드', fontproperties='Malgun Gothic', fontsize=12)
-    plt.ylabel('평균 보상', fontproperties='Malgun Gothic', fontsize=12)
-    plt.title('DQN 학습 진행 - 이동 평균', fontproperties='Malgun Gothic', fontsize=14)
+    plt.xlabel('Episode', fontsize=12)
+    plt.ylabel('Average Reward', fontsize=12)
+    plt.title('DQN Training Progress - Moving Average', fontsize=14)
     plt.grid(True, alpha=0.3)
-    plt.legend(prop={'family': 'Malgun Gothic'})
+    plt.legend()
     
     plt.tight_layout()
     plt.savefig(save_path, dpi=300, bbox_inches='tight')
@@ -85,6 +148,9 @@ def train_dqn(
         print_interval (int): 진행 상황 출력 간격 (기본값: 100 에피소드)
         model_save_path (str): 모델 저장 경로 (기본값: 'cartpole_dqn.pth')
     """
+    
+    # 한글 폰트 설정 (Google Colab 지원)
+    setup_korean_font()
     
     # Random Seed 고정 (재현성 확보)
     set_seed(42)
